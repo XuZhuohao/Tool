@@ -26,4 +26,8 @@ public class MdUrlObject {
      * 对应的md文件指向
      */
     private File file;
+    /**
+     * 图片对象
+     */
+    private ImageObject imageObject;
 }
