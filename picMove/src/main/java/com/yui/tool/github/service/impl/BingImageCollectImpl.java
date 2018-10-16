@@ -19,12 +19,17 @@ public class BingImageCollectImpl implements ImageCollect {
 
     private final static String MAIN_URL = "https://cn.bing.com";
 
+    /**
+     * TODO: BingImageCollectImpl是否可以修改成base类型，getImageObject 传入 patternStr， MAIN_URL，groupIndexes
+     * @return
+     */
     @Override
     public List<ImageObject> getImageObject() {
         String patternStr = "g_img\\=\\{url:\\s*\"([^\"]*)\"";
         // 获取图片地址数组
         List<String> urls = ImageCollectUtil.getUrlByPatternOfUrl(patternStr, MAIN_URL,1);
         List<ImageObject> imageObjectList = new ArrayList<>(16);
+        // 解析bing网页获取相应的image url, name, suffix属性
         urls.forEach(url -> {
             ImageObject imageObject = new ImageObject();
             imageObject.setUrl(MAIN_URL + url);
@@ -34,6 +39,7 @@ public class BingImageCollectImpl implements ImageCollect {
             imageObject.setSuffix(dealUrls.get(2));
             imageObjectList.add(imageObject);
         });
+        // TODO: 下载图片，交给通用类处理，是否要在解析的时候就赋予diskPath？增加imageObject成功下载标志
         return imageObjectList;
     }
 }

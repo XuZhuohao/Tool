@@ -13,7 +13,7 @@ import java.util.List;
 public interface ImageCollect {
     /**
      * 获取图片对象集合 {@link com.yui.tool.github.domain.ImageObject}
-     * @return 图片对象集合，只拥有 {@link com.yui.tool.github.domain.ImageObject#name} 和 {@link com.yui.tool.github.domain.ImageObject#suffix}
+     * @return 图片对象集合
      */
     List<ImageObject> getImageObject();
 }
