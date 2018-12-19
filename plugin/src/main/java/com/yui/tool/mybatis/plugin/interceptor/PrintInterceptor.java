@@ -32,8 +32,6 @@ public class PrintInterceptor implements Interceptor {
     public Object intercept(Invocation invocation) throws Throwable {
         StatementHandler statementHandler = (StatementHandler) invocation.getTarget();
         final MetaObject metaObject = SystemMetaObject.forObject(statementHandler);
-        MappedStatement ms = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
-        SqlCommandType sqlCmdType = ms.getSqlCommandType();
         BoundSql boundSql = (BoundSql) metaObject.getValue("delegate.boundSql");
         // 入参
         Object parameterObject = boundSql.getParameterObject();
