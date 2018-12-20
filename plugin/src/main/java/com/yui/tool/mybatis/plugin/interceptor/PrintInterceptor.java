@@ -3,8 +3,6 @@ package com.yui.tool.mybatis.plugin.interceptor;
 import com.yui.tool.mybatis.plugin.util.DateUtils;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
@@ -14,7 +12,9 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * 插入拦截
@@ -48,7 +48,7 @@ public class PrintInterceptor implements Interceptor {
      * 判断类别
      *
      * @param parameterObject 参数对象
-     * @param originalSql sql 语句
+     * @param originalSql     sql 语句
      * @return sql 语句
      */
     private String getSqlOfType(Object parameterObject, String originalSql) throws Exception {
@@ -74,8 +74,9 @@ public class PrintInterceptor implements Interceptor {
 
     /**
      * 从对象拼接 sql
+     *
      * @param originalSql sql
-     * @param obj obj
+     * @param obj         obj
      * @return sql
      * @throws Exception IllegalAccessException
      */
@@ -86,14 +87,15 @@ public class PrintInterceptor implements Interceptor {
             //获取属性值
             Object value = declaredField.get(obj);
             boolean flag = originalSql.contains("insert") || originalSql.contains("update");
-            if (value == null &&  flag ){
+            if (value == null && flag) {
                 originalSql = originalSql.replaceFirst("\\?", "''");
-            } else if (value != null){
+            } else if (value != null) {
                 originalSql = getSqlOfType(value, originalSql);
             }
         }
         return originalSql;
     }
+
     /**
      * 遍历 map
      *
