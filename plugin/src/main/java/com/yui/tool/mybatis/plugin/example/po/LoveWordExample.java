@@ -1,4 +1,4 @@
-package com.yui.tool.mybatis.plugin.po;
+package com.yui.tool.mybatis.plugin.example.po;
 
 import java.util.ArrayList;
 import java.util.Date;

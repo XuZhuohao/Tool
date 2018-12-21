@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan(basePackages = "com.yui.tool.mybatis.plugin.mapper")
+@MapperScan(basePackages = "com.yui.tool.mybatis.plugin.example.mapper")
 public class PluginApplication {
 
     public static void main(String[] args) {

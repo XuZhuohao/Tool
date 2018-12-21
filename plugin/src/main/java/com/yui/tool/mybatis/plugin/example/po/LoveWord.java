@@ -1,4 +1,7 @@
-package com.yui.tool.mybatis.plugin.po;
+package com.yui.tool.mybatis.plugin.example.po;
+
+import com.yui.tool.mybatis.plugin.annotation.CreateBy;
+import com.yui.tool.mybatis.plugin.example.data.UserData;
 
 import java.util.Date;
 
@@ -11,6 +14,7 @@ public class LoveWord {
 
     private String nickName;
 
+    @CreateBy(target = UserData.class)
     private Long times;
 
     private Integer useDate;

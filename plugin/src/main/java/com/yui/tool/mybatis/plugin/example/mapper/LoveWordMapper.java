@@ -1,7 +1,7 @@
-package com.yui.tool.mybatis.plugin.mapper;
+package com.yui.tool.mybatis.plugin.example.mapper;
 
-import com.yui.tool.mybatis.plugin.po.LoveWord;
-import com.yui.tool.mybatis.plugin.po.LoveWordExample;
+import com.yui.tool.mybatis.plugin.example.po.LoveWord;
+import com.yui.tool.mybatis.plugin.example.po.LoveWordExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
