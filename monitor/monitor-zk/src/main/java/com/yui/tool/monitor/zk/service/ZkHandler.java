@@ -12,6 +12,4 @@ public interface ZkHandler {
      * 建立连接
      */
     void established(WatchedEvent event, ZkService zkService);
-
-    void nodeChildrenChanged(WatchedEvent event, ZkService zkService);
 }

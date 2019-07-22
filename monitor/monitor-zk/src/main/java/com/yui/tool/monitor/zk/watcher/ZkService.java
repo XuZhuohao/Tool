@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,7 @@ import java.util.concurrent.CountDownLatch;
 @Data
 @Slf4j
 public class ZkService implements Watcher {
-    private static final CountDownLatch COUNT_DOWN_LATCH = new CountDownLatch(1);
+    private final CountDownLatch countDownLatch = new CountDownLatch(1);
     private ZooKeeper zooKeeper;
     private String address;
     private int timeout = 5000;
@@ -33,6 +32,13 @@ public class ZkService implements Watcher {
     private ZkService() {
     }
 
+    /**
+     * 获取实例
+     * @param address zookeeper 地址
+     * @param timeout 超时时间，单位毫秒
+     * @param zkHandler  ZkHandler 实现,用于处理连接成功后的处理
+     * @return zkService
+     */
     public static ZkService getInstance(String address, int timeout, ZkHandler zkHandler) {
         final ZkService zkService = new ZkService();
         zkService.setZkHandler(zkHandler);
@@ -44,7 +50,7 @@ public class ZkService implements Watcher {
     public void process(WatchedEvent event) {
         System.out.println("receive the event:" + event);
         if (Event.KeeperState.SyncConnected == event.getState() || Event.EventType.None == event.getType()) {
-            COUNT_DOWN_LATCH.countDown();
+            countDownLatch.countDown();
             this.zkHandler.established(event, this);
         }
     }
@@ -54,7 +60,7 @@ public class ZkService implements Watcher {
             this.address = address;
             this.timeout = timeout;
             zooKeeper = new ZooKeeper(address, timeout, this);
-            COUNT_DOWN_LATCH.await();
+            countDownLatch.await();
             log.info("zookeeper connection state:%s", zooKeeper.getState());
         } catch (Exception e) {
             log.error("zookeeper connection exception:%s", zooKeeper.getState());
@@ -81,17 +87,17 @@ public class ZkService implements Watcher {
      * @param watcher watcher
      */
     public void addWatch(String path, Watcher watcher){
-        List<Watcher> watchers = pathWatcher.get(path);
-        if (watchers == null){
-            watchers = new ArrayList<>();
-            watchers.add(watcher);
-            pathWatcher.put(path, watchers);
-        }
         try {
+            log.info(path + " add wathcer" + watcher.getClass());
             this.zooKeeper.getData(path, watcher, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    public ZkWatcher getZkWatcher(String path){
+        return ZkWatcher.getInstance(path, this);
     }
 
 }

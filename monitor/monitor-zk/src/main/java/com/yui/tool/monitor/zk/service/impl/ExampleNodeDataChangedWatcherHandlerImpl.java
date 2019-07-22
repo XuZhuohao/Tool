@@ -11,10 +11,10 @@ import org.apache.zookeeper.Watcher;
  * @date 2019/7/22
  */
 @Slf4j
-public class ExampleNodeDataChangedWathcerHandlerImpl implements WatcherHandler {
+public class ExampleNodeDataChangedWatcherHandlerImpl implements WatcherHandler {
     private String oldData;
     private String path;
-    public ExampleNodeDataChangedWathcerHandlerImpl(String path, ZkService zkService){
+    public ExampleNodeDataChangedWatcherHandlerImpl(String path, ZkService zkService){
         try {
             final byte[] data = zkService.getZooKeeper().getData(path, false, null);
             this.oldData = new String(data);

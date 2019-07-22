@@ -18,10 +18,4 @@ public class DefaultZkHandler implements ZkHandler {
     public void established(WatchedEvent event, ZkService zkService) {
         log.info("zookeeper session established:%s", JSON.toJSONString(zkService));
     }
-
-    @Override
-    public void nodeChildrenChanged(WatchedEvent event, ZkService zkService) {
-        log.info("zookeeper nodeChildrenChanged zkService:%s", JSON.toJSONString(zkService));
-        log.info("zookeeper nodeChildrenChanged path:%s", event.getPath());
-    }
 }

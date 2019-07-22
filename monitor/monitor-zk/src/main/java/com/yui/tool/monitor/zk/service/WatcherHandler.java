@@ -13,7 +13,8 @@ public interface WatcherHandler {
     /**
      * 处理过程
      * @param event watch 处理时间
-     * @return 处理结果
+     * @param zkService zkService 实例
+     * @return 处理结果，返回结果为 true ,会被重新添加监听，即下次再发生变动的时候，再次处理
      */
     boolean process(WatchedEvent event, ZkService zkService);
 }

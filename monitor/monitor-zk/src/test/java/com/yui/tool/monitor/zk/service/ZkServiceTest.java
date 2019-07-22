@@ -1,7 +1,7 @@
 package com.yui.tool.monitor.zk.service;
 
 import com.yui.tool.monitor.zk.service.impl.DefaultZkHandler;
-import com.yui.tool.monitor.zk.service.impl.ExampleNodeDataChangedWathcerHandlerImpl;
+import com.yui.tool.monitor.zk.service.impl.ExampleNodeDataChangedWatcherHandlerImpl;
 import com.yui.tool.monitor.zk.watcher.ZkService;
 import com.yui.tool.monitor.zk.watcher.ZkWatcher;
 import org.apache.zookeeper.Watcher;
@@ -18,7 +18,7 @@ public class ZkServiceTest {
         zkServiceImpl.createEphemeral("/test01", "t01");
         zkServiceImpl.createEphemeral("/test02", "t02");
         //添加监控节点 /test01，监控事件为 NodeDataChanged，NodeDeleted
-        final ZkWatcher instance = ZkWatcher.getInstance("/test01", zkServiceImpl);
+        final ZkWatcher instance = zkServiceImpl.getZkWatcher("/test01");
         instance.addWatcherHandler(Watcher.Event.EventType.NodeDataChanged,
                 (event, zkService) -> {
                     try {
@@ -34,11 +34,10 @@ public class ZkServiceTest {
                     System.out.println("NodeDeleted:" + event.getPath());
                     return true;
                 });
-        instance.addWatcherHandler(Watcher.Event.EventType.NodeDataChanged, new ExampleNodeDataChangedWathcerHandlerImpl("/test01", zkServiceImpl));
-        zkServiceImpl.addWatch("/test01", instance);
+        instance.addWatcherHandler(Watcher.Event.EventType.NodeDataChanged, new ExampleNodeDataChangedWatcherHandlerImpl("/test01", zkServiceImpl));
 
         //添加监控节点 /test02，监控事件为 NodeDataChanged，NodeDeleted
-        final ZkWatcher instance1 = ZkWatcher.getInstance("/test02", zkServiceImpl);
+        final ZkWatcher instance1 = zkServiceImpl.getZkWatcher("/test02");
         instance1.addWatcherHandler(Watcher.Event.EventType.NodeDataChanged,
                 (event, zkService) -> {
                     try {
@@ -54,8 +53,7 @@ public class ZkServiceTest {
                     System.out.println("NodeDeleted:" + event.getPath());
                     return true;
                 });
-        zkServiceImpl.addWatch("/test02", instance);
-
+        Thread.sleep(3 * 1000);
         // 修改值
         zkServiceImpl.getZooKeeper().setData("/test01", "t01".getBytes(), -1);
         zkServiceImpl.getZooKeeper().setData("/test02", "t0202".getBytes(), -1);
