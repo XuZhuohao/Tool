@@ -1,12 +1,10 @@
-package com.yui.tool.monitor.zk.service.impl;
+package com.yui.tool.monitor.zk.watcher;
 
-import com.alibaba.fastjson.JSON;
 import com.yui.tool.monitor.zk.service.ZkHandler;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,9 +46,6 @@ public class ZkService implements Watcher {
         if (Event.KeeperState.SyncConnected == event.getState() || Event.EventType.None == event.getType()) {
             COUNT_DOWN_LATCH.countDown();
             this.zkHandler.established(event, this);
-        }
-        if(Event.EventType.NodeChildrenChanged ==  event.getType()){
-            this.zkHandler.nodeChildrenChanged(event, this);
         }
     }
 

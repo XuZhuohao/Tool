@@ -1,6 +1,6 @@
 package com.yui.tool.monitor.zk.service;
 
-import com.yui.tool.monitor.zk.service.impl.ZkService;
+import com.yui.tool.monitor.zk.watcher.ZkService;
 import org.apache.zookeeper.WatchedEvent;
 
 /**
