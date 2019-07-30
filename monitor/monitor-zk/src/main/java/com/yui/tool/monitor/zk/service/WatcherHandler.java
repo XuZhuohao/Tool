@@ -17,4 +17,12 @@ public interface WatcherHandler {
      * @return 处理结果，返回结果为 true ,会被重新添加监听，即下次再发生变动的时候，再次处理
      */
     boolean process(WatchedEvent event, ZkService zkService);
+
+    /**
+     * 初始化入口
+     * @param handlerInitObj 初始化对象
+     */
+    default void init(String handlerInitObj){
+
+    }
 }
