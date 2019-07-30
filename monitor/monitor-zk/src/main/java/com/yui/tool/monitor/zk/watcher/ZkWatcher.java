@@ -50,14 +50,17 @@ public class ZkWatcher implements Watcher {
     @Override
     public void process(WatchedEvent event) {
         Set<WatcherHandler> watcherHandlers = watcherHandlerMap.get(event.getType());
-        // 业务处理入口
-        watcherHandlers.forEach(watcherHandler -> {
-            final boolean process = watcherHandler.process(event, this.zkService);
-            // 返回结果为 false 则移除该处理
-            if (!process){
-                watcherHandlers.remove(watcherHandler);
-            }
-        });
+        // 存在的处理器才进行
+        if (watcherHandlers != null) {
+            // 业务处理入口
+            watcherHandlers.forEach(watcherHandler -> {
+                final boolean process = watcherHandler.process(event, this.zkService);
+                // 返回结果为 false 则移除该处理
+                if (!process) {
+                    watcherHandlers.remove(watcherHandler);
+                }
+            });
+        }
         // 非删除节点事重新添加 watcher
         if (event.getType() != Event.EventType.NodeDeleted) {
             this.zkService.addWatch(event.getPath(), this);
