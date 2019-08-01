@@ -91,7 +91,7 @@ public class ZkService implements Watcher {
             log.info(path + " add wathcer" + watcher.getClass());
             // 节点数据监控
             this.zooKeeper.getData(path, watcher, null);
-            // 子节点监控（TODO:rmr 对应到 NodeChildrenChanged = =）
+            // 子节点监控
             this.zooKeeper.getChildren(path, watcher, null);
         } catch (Exception e) {
             e.printStackTrace();
