@@ -89,7 +89,10 @@ public class ZkService implements Watcher {
     public void addWatch(String path, Watcher watcher){
         try {
             log.info(path + " add wathcer" + watcher.getClass());
+            // 节点数据监控
             this.zooKeeper.getData(path, watcher, null);
+            // 子节点监控（TODO:rmr 对应到 NodeChildrenChanged = =）
+            this.zooKeeper.getChildren(path, watcher, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
