@@ -31,6 +31,9 @@ public class JavaMailServiceImpl implements JavaMailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setFrom(emailEntity.getFromUser());
             helper.setTo(emailEntity.getToUser());
+            for (String s : emailEntity.getCopyTo()) {
+                helper.addCc(s);
+            }
             helper.setSubject(emailEntity.getSubject());
             helper.setText(emailEntity.getContent(), true);
             // 插入图片

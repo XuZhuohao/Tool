@@ -27,7 +27,11 @@ public class EmailEntity {
     /**
      * 收件人
      */
-    private String toUser;
+    private String[] toUser;
+    /**
+     * 抄送
+     */
+    private String[] copyTo;
     /**
      * 主题
      */
@@ -43,6 +47,5 @@ public class EmailEntity {
     /**
      * 附件
      */
-
     private Set<FileEntity> files;
 }
