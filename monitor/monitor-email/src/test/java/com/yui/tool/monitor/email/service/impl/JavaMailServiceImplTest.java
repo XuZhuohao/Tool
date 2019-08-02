@@ -24,15 +24,18 @@ public class JavaMailServiceImplTest extends MonitorEmailApplicationTest {
         final String key = JavaMailSenderService.addJavaMailSender(mailSenderDto);
         EmailEntity emailEntity = new EmailEntity();
         emailEntity.setContent("内容：email 测试<image src=\"cid:111\"/>").setFromUser("786725551@qq.com")
-                .setPassWord("password").setSubject("主题：测试").setToUser("651334311@qq.com");
+                .setPassWord("passWord").setSubject("主题：测试")
+                .setToUser(new String[]{"test1@qq.com","test2@qq.com"});
 
         Set<FileEntity> files = new HashSet<>(16);
-        files.add(new FileEntity().setFileName("附件1").setPath("D:\\data\\023 (4).jpg"));
+        files.add(new FileEntity().setFileName("附件1.jpg").setPath("D:\\data\\023 (4).jpg"));
         emailEntity.setFiles(files);
 
         Set<ImageEntity> images = new HashSet<>(16);
         images.add(new ImageEntity().setCid("111").setSrc("D:\\data\\023 (4).jpg"));
         emailEntity.setImages(images);
+
+        emailEntity.setCopyTo(new String[]{"test3@qq.com","test4@qq.com"});
 
         final boolean b = javaMailService.sendEmail(JavaMailSenderService.getJavaMailSender(key), emailEntity);
         System.out.println("发送结果：" + b);
