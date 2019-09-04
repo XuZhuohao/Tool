@@ -15,7 +15,7 @@ import java.util.Set;
 @Setter
 @Getter
 @Accessors(chain = true)
-public class EmailEntity {
+public class SendEmailEntity {
     /**
      * 发件人
      */

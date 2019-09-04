@@ -1,6 +1,7 @@
 package com.yui.tool.monitor.email.service;
 
-import com.yui.tool.monitor.email.dto.EmailEntity;
+import com.yui.tool.monitor.email.dto.ReceiveEmailEntity;
+import com.yui.tool.monitor.email.dto.SendEmailEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 
 /**
@@ -10,8 +11,11 @@ import org.springframework.mail.javamail.JavaMailSender;
 public interface JavaMailService {
     /**
      *@param mailSender  邮箱服务
-     * @param emailEntity
+     * @param sendEmailEntity
      * @return
      */
-    boolean sendEmail(JavaMailSender mailSender, EmailEntity emailEntity);
+    boolean sendEmail(JavaMailSender mailSender, SendEmailEntity sendEmailEntity);
+
+
+    void receiveEmail(JavaMailSender mailSender, ReceiveEmailEntity receiveEmailEntity);
 }
