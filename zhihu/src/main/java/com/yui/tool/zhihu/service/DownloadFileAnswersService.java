@@ -13,20 +13,30 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * 获取答案，并下载文件（图片，视频）
+ * https://www.zhihu.com/api/v4/questions/{questionsId}/answers?include=data[*].is_normal,content&limit=1&offset=0&sort_by=default
+ * 如：
+ * https://www.zhihu.com/api/v4/questions/319371540/answers?include=data[*].is_normal,content&limit=1&offset=0&sort_by=default
+ *
  * @author XuZhuohao
  * @date 2019-12-14 0:20
  */
-public class ImageService {
-    private List<String> imgUrl = new ArrayList<>(200);
+public class DownloadFileAnswersService {
     /**
      * <img src=\"https://pic1.zhimg.com/50/v2-98785721d03ba12f5381365bc1a84dad_hd.jpg\" data-rawwidth=\"3024\" data-rawheight=\"3024\" data-size=\"normal\" data-default-watermark-src=\"https://pic2.zhimg.com/50/v2-87a4b44b3d480948546db7fdd87ba3fc_hd.jpg\" class=\"origin_image zh-lightbox-thumb\" width=\"3024\" data-original=\"https://pic1.zhimg.com/v2-98785721d03ba12f5381365bc1a84dad_r.jpg\"/>
      */
-    private static Pattern pattern = Pattern.compile("<img src=\"(https:[^\"]*)\"");
+    private static Pattern imgPattern = Pattern.compile("<img src=\"(https:[^\"]*)\"");
+    /**
+     * <a class=\"video-box\" href=
+     * <span class=\"z-ico-video\"></span>https://www.zhihu.com/video/1153835149035814912</span></span>
+     */
+    private static Pattern videoPattern = Pattern.compile("<span class=\"z-ico-video\"></span>(https:[^<]*)</span>");
     private static final String QUESTION_URL = "https://www.zhihu.com/api/v4/questions/${problemNo}/";
     private static final String ANSWERS_API = "answers?include=data[*].is_normal,content&limit=${limit}&offset=${offset}&sort_by=default";
     private static String dir = "src/main/image/";
     private String problemNo = "";
-    private long sortNo = 1L;
+    private long imgSortNo = 1L;
+    private long videoSortNo = 1L;
 
     private void login(String loginId, String password) {
 //        HttpUtils.createJsonRequestBody()
@@ -46,7 +56,7 @@ public class ImageService {
             file.mkdirs();
         }
         this.problemNo = problemNo;
-        this.sortNo = offset;
+        this.imgSortNo = offset;
         /**
          * ${problemNo}
          * ${limit}
@@ -86,31 +96,76 @@ public class ImageService {
 
             //处理业务
             JSONArray data = result.getJSONArray("data");
-            initImageUrl(data);
+            downloadImage(data);
+            downloadVideo(data);
             System.out.println("==========================begin offset:" + offset);
         }
 
     }
 
-    private void initImageUrl(JSONArray data) {
+    private void downloadImage(JSONArray data) {
         data.forEach(temp -> {
             List<String> imgUrl = new ArrayList<>(160);
             JSONObject t1 = (JSONObject) temp;
             String content = t1.getString("content");
-            final Matcher matcher = pattern.matcher(content);
+            final Matcher matcher = imgPattern.matcher(content);
             while (matcher.find()) {
                 imgUrl.add(matcher.group(1));
             }
-            System.out.println("begin a question, sortNo:" + sortNo);
-            downloadImg(imgUrl);
-            sortNo++;
+            System.out.println("begin a question, imgSortNo:" + imgSortNo);
+            downloadFile(imgUrl, imgSortNo);
+            imgSortNo++;
         });
     }
 
-    private void downloadImg(List<String> imgUrl) {
-        for (String url : imgUrl) {
+    private void downloadVideo(JSONArray data) {
+        data.forEach(temp -> {
+            List<String> videoUrl = new ArrayList<>(160);
+            JSONObject t1 = (JSONObject) temp;
+            String content = t1.getString("content");
+            final Matcher matcher = videoPattern.matcher(content);
+            while (matcher.find()) {
+                // https://www.zhihu.com/video/1153835149035814912 转换成
+                // https://lens.zhihu.com/api/v4/videos/1153835149035814912
+                String group = matcher.group(1);
+                group = group.replace("www.zhihu.com/video", "lens.zhihu.com/api/v4/videos");
+                Response response = null;
+                JSONObject jsonObject = null;
+                String url = null;
+                try {
+                    response = HttpUtils.doSyncGet(group, null, null, null);
+                    jsonObject = JSONObject.parseObject(response.body().string());
+                    // 高清晰度 HD 、标准清晰度 SD 、普通清晰度 LD
+                    JSONObject playlist = jsonObject.getJSONObject("playlist");
+                    if (playlist.get("HD") != null) {
+                        url = playlist.getJSONObject("HD").getString("play_url");
+                    } else if (playlist.get("SD") != null) {
+                        url = playlist.getJSONObject("SD").getString("play_url");
+                    } else if (playlist.get("LD") != null) {
+                        url = playlist.getJSONObject("LD").getString("play_url");
+                    }
+                } catch (IOException e) {
+                    System.out.println(jsonObject.toJSONString());
+                    e.printStackTrace();
+                    return;
+                }
+                if (url == null) {
+                    continue;
+                }
+
+                videoUrl.add(url);
+            }
+            System.out.println("begin a question, videoSortNo:" + videoSortNo);
+            downloadFile(videoUrl, videoSortNo);
+            videoSortNo++;
+        });
+    }
+
+
+    private void downloadFile(List<String> fileUrl, Long sortNo) {
+        for (String url : fileUrl) {
             try {
-                String fileName = this.sortNo + "-" + getName(url);
+                String fileName = sortNo + "-" + getName(url);
                 HttpUtils.download(dir + this.problemNo + File.separator + fileName, url);
                 Thread.sleep(1000);
             } catch (Exception e) {
@@ -122,7 +177,8 @@ public class ImageService {
 
     private static String getName(String url) {
         String[] split = url.split("/");
-        return split[split.length - 1];
+        String[] paramSplit = split[split.length - 1].split("\\?");
+        return paramSplit[0];
     }
 
     public static void main(String[] args) throws IOException {
@@ -136,9 +192,9 @@ public class ImageService {
 //        String text = "https://pic1.zhimg.com/50/v2-98785721d03ba12f5381365bc1a84dad_hd.jpg";
 //        System.out.println(getName(text));
 
-        ImageService imageService = new ImageService();
-        //308457217 285321190 62972819
-        imageService.downloadImage("62972819", 30, 0);
-//        imageService.downloadImg(Collections.singletonList("https://pic4.zhimg.com/50/v2-5eeced557e0298a53e4e0d18e86d8e72_hd.jpg"));
+        DownloadFileAnswersService downloadFileAnswersService = new DownloadFileAnswersService();
+        //308457217 285321190 62972819 319371540
+        downloadFileAnswersService.downloadImage("294482155", 50, 0);
+//        downloadFileAnswersService.downloadFile(Collections.singletonList("https://pic4.zhimg.com/50/v2-5eeced557e0298a53e4e0d18e86d8e72_hd.jpg"));
     }
 }
