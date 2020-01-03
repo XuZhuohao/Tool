@@ -15,6 +15,10 @@ import java.util.List;
 @Accessors(chain = true)
 public class MethodInfo {
     /**
+     * 唯一id
+     */
+    private String id;
+    /**
      * 方法名
      */
     private String name;
