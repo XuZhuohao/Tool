@@ -24,8 +24,10 @@ public class MavenUtils {
     /**
      * TODO 启动是检测环境变量
      */
-    private final static String MAVEN_HOME = System.getProperty("M2_HOME");
-
+    private static String MAVEN_HOME = System.getProperty("M2_HOME");
+    static {
+        MAVEN_HOME = "D:\\software\\apache-maven-3.5.4";
+    }
 
     public static void main(String[] args) throws Exception {
         String pom = "<!-- apollo -->\n" +
@@ -71,12 +73,14 @@ public class MavenUtils {
                 "            <artifactId>spring-boot-starter-test</artifactId>\n" +
                 "            <scope>test</scope>\n" +
                 "        </dependency>";
-        downloadDependency(pom, "temp\\download1.xml", "D:\\software\\apache-maven-3.5.4\\conf\\bluemoon-settings.xml");
+//        final List<Dependency> dependencies = analysisDependencies(pom);
+//        downloadDependency(dependencies, "temp\\download1.xml", "D:\\software\\apache-maven-3.5.4\\conf\\bluemoon-settings.xml");
+        final Properties properties = System.getProperties();
     }
 
-    public static void downloadDependency(String dependency, String targetPath, String mavenSettingFile) throws Exception {
+    public static void downloadDependency(List<Dependency> dependencies, String targetPath, String mavenSettingFile) throws Exception {
         // 解析文本，获取所有依赖对象
-        final List<Dependency> dependencies = analysisDependencies(dependency);
+//        final List<Dependency> dependencies = analysisDependencies(dependency);
         final HashMap<String, Object> imMap = new HashMap<>(16);
         imMap.put("dependencies", dependencies);
         // 构建 pom.xml 文件
@@ -95,12 +99,12 @@ public class MavenUtils {
         }
         request.setAlsoMakeDependents(true);
         Invoker invoker = new DefaultInvoker();
-        invoker.setMavenHome(new File("D:\\software\\apache-maven-3.5.4"));
+        invoker.setMavenHome(new File(MAVEN_HOME));
         invoker.setWorkingDirectory(pomFile.getParentFile());
         invoker.execute(request);
     }
 
-    private static List<Dependency> analysisDependencies(String dependency) {
+    public static List<Dependency> analysisDependencies(String dependency) {
         List<Dependency> dependencies = new ArrayList<>(16);
         final String[] split = dependency.split("</dependency>([\\s]+)<dependency>");
         for (String text : split) {
