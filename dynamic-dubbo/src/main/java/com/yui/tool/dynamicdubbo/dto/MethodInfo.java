@@ -17,7 +17,11 @@ public class MethodInfo {
     /**
      * 唯一id
      */
-    private String id;
+    private int id;
+    /**
+     * 类名
+     */
+    private String className;
     /**
      * 方法名
      */
@@ -35,6 +39,7 @@ public class MethodInfo {
     }
 
     public MethodInfo(Method method) {
+        this.className = method.getDeclaringClass().getName();
         this.name = method.getName();
         this.parameterCount = method.getParameterCount();
         this.paramType = new String[this.parameterCount];

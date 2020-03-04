@@ -13,6 +13,10 @@ import java.util.List;
 @Accessors(chain = true)
 public class DubboIntefaceInfo {
     /**
+     * dubbo id
+     */
+    private Integer id;
+    /**
      * TODO: result type
      * 接口名
      */

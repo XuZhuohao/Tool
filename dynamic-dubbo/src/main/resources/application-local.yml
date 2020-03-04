@@ -1,0 +1,26 @@
+dubbo:
+  protocol:
+    name: dubbo
+    port: 20880
+  provider:
+    timeout: 200000
+  consumer:
+    timeout: 200000
+    check: false
+  registry:
+    check: false
+    address: zookeeper://127.0.0.1:2181?backup=127.0.0.1:2182,127.0.0.1:2183
+  application:
+    name: dynamic-dubbo
+
+server:
+  port: 8081
+spring:
+  profiles: local
+dynamic:
+  dubbo:
+    maven:
+      home: D:\Environment\MAVEN\apache-maven-3.5.3
+      download-path: G:\Study\Code\Tool\dynamic-dubbo\download
+      pom-path: G:\Study\Code\Tool\dynamic-dubbo\download
+      setting-file: D:\Environment\MAVEN\bluemoon-settings.xml

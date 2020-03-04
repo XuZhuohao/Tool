@@ -25,9 +25,9 @@ public class MavenUtils {
      * TODO 启动是检测环境变量
      */
     private static String MAVEN_HOME = System.getProperty("M2_HOME");
-    static {
-        MAVEN_HOME = "D:\\software\\apache-maven-3.5.4";
-    }
+//    static {
+//        MAVEN_HOME = "D:\\software\\apache-maven-3.5.4";
+//    }
 
     public static void main(String[] args) throws Exception {
         String pom = "<!-- apollo -->\n" +
@@ -136,5 +136,9 @@ public class MavenUtils {
             return matcher.group(1);
         }
         return null;
+    }
+
+    public static void setMavenHome(String mavenHome) {
+        MAVEN_HOME = mavenHome;
     }
 }
